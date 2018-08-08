@@ -1,5 +1,6 @@
 import pandas as pd
 import operator
+import os
 
 
 def max_num_feature(name):
@@ -58,7 +59,6 @@ def max_frequecny_feature(name):
 
 def get_classes_feature(name, feature):
     df = pd.read_csv('../data/splited_data/split_to_classes/{0}.csv'.format(name))
-    print('the total is %d ' % df.shape[0])
     features_num = {}
     features_fre = {}
 
@@ -69,14 +69,13 @@ def get_classes_feature(name, feature):
 
     for i in range(df.shape[0]):
         features = set()
-        articles = df.iloc[i, loc]
-        articles = articles.split(' ')
-        for it in articles:
+        item = df.iloc[i, loc]
+        item = item.split(' ')
+        for it in item:
             if it in features:
                 features_num[it] += 1
             else:
                 features.add(it)
-
                 if it in features_num:
                     features_num[it] += 1
                 else:
@@ -98,13 +97,12 @@ def get_classes_feature(name, feature):
         temp.append(features_num[it])
         res.append(temp)
     # saving。。。
-    res = sorted(res, key=lambda x: x[1], reverse=True)
+    print(int(df.shape[0] / 3))
     res = pd.DataFrame(res, columns=['id', 'frequency', 'num'])
-    res = res[res['frequency'] > int(res.shape[0] / 3)]
+    res = res[res['frequency'] > int(df.shape[0] / 3)]
     res.to_csv('../data/features/{0}/{0}_{1}.csv'.format(feature, name), index=False)
     print('{0} is finished'.format(name))
 
-    count_feature_classes('train_set',feature)
 
 
 def count_feature_classes(name, feature):
@@ -120,6 +118,7 @@ def count_feature_classes(name, feature):
         print('%d csv is count' % index)
     feature_list = []
     for k, v in feature_dic.items():
+        print(k,v)
         feature_list.append([k, v])
     feature_df = pd.DataFrame(feature_list, columns=['id', 'frequency'])
     feature_df = feature_df[feature_df['frequency'] < 7]
