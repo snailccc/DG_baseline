@@ -1,24 +1,40 @@
 import pandas as pd
-def reduce_dimension(name):
-    df = pd.read_csv('../data/data_raw/{0}_set.csv'.format(name))
-    # df = pd.read_csv('../test.csv')
-    feature=[]
-    with open('../data/features/article.txt') as f:
-        for it in f:
-            feature.append(it.split('\n')[0])
-    articles=[]
+
+FEATURES = ['article','word_seg']
+
+def reduce_dimension(name,type,articles,word_segs):
+    if type == 'train':
+        df = pd.read_csv('../data/splited_data/split_to_classes/{0}.csv'.format(name))
+        classes = df.pop('class')
+    elif type == 'test':
+        df = pd.read_csv('../data/data_raw/test_set.csv')
+    res = []
     for i in range(df.shape[0]):
-        article = []
-        temp=df.iloc[i,1]
-        temp=temp.split(' ')
-        for it in temp:
-            if it in feature:
-                article.append(it)
-        articles.append(' '.join(article))
-    print(articles)
-    df.drop('article',axis=1,inplace=True)
-    df.insert(1,'article',pd.DataFrame(articles))
-    print(df.head())
-    df.to_csv('../data/data_low_dimension/{0}_low_dimension.csv'.format(name),index=False)
-    # df.to_csv('../res.csv',index=False)
+        item = []
+        id = df.iloc[i,0]
+        article = df.iloc[i,1].split(' ')
+        word_seg = df.iloc[i,2].split(' ')
+        temp=[]
+        for it in article:
+            if it in articles:
+                temp.append(it)
+        article = ' '.join(temp)
+        temp = []
+        for it in word_seg:
+            if it in word_segs:
+                temp.append(it)
+        word_seg = ' '.join(temp)
+        item.append(id)
+        item.append(article)
+        item.append(word_seg)
+        res.append(item)
+        if i %100 == 0:
+            print(i)
+    res = pd.DataFrame(res,columns=['id','article','word'])
+    if type == 'train':
+        res = res.merge(classes)
+    res.to_csv('../data/data_low_dimension/{0}_encoded.csv'.format(name),index=False)
+    print('{0} is encoded'.format(name))
+
+
 
