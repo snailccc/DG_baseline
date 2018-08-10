@@ -8,7 +8,6 @@ class Encode(object):
     @classmethod
     def cvEncoding(cls, df, features):
         cv = CountVectorizer()
-        print('start cv....')
         for feature in features:
             df[feature] = df[feature].astype('str')
             cv.fit(df[feature])
