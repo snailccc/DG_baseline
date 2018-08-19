@@ -64,7 +64,8 @@ def get_classes_feature(name, feature):
     elif feature == 'word_seg':
         loc = 2
 
-    for i in range(df.shape[0]):
+    n = df.shape[0]
+    for i in range(n):
         features = set()
         item = df.iloc[i, loc]
         item = item.split(' ')
@@ -90,12 +91,13 @@ def get_classes_feature(name, feature):
     for it in features_fre.keys():
         temp = []
         temp.append(it)
-        temp.append(features_fre[it])
+        temp.append(features_fre[it]/n)
         temp.append(features_num[it])
         res.append(temp)
     # saving。。。
     res = pd.DataFrame(res, columns=['id', 'frequency', 'num'])
-    res = res[res['frequency'] > int(df.shape[0] / 3)]
+    res = res[res['frequency'] > 0.25]
+    print(res[res['frequency']>0.25].shape)
     res.to_csv('../data/features/{0}/{0}_{1}.csv'.format(feature, name), index=False)
     print('{0} is finished'.format(name))
 
@@ -111,7 +113,8 @@ def count_feature_classes(name, feature):
                 feature_class[id].add(str(index))
             else:
                 feature_dic[id] = 1
-                feature_class[id] = set(str(index))
+                feature_class[id] = set()
+                feature_class[id].add(str(index))
         print('%d csv is count' % index)
     feature_list = []
     for k, v in feature_dic.items():
