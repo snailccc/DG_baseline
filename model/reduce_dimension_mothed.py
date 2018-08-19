@@ -4,12 +4,12 @@ FEATURES = ['article','word_seg']
 
 def reduce_dimension(name,set_type,articles,word_segs):
     if set_type == 'train':
-        df = pd.read_csv('../data/splited_data/split_to_classes/{0}.csv'.format(name))
+        #df = pd.read_csv('../data/splited_data/split_to_classes/{0}.csv'.format(name))
+        df = pd.read_csv('../{0}.csv'.format(name))
         classes = df.pop('class')
     elif set_type == 'test':
         df = pd.read_csv('../data/data_raw/test_set.csv')
     res = []
-    print(articles)
     for i in range(df.shape[0]):
         item = []
         id = df.iloc[i,0]
@@ -18,7 +18,6 @@ def reduce_dimension(name,set_type,articles,word_segs):
         temp=[]
         for it in article:
             if it in articles:
-                print(it)
                 temp.append(it)
         article = ' '.join(temp)
         temp = []

@@ -27,8 +27,12 @@ def lgb_predict(train_x,train_y,test_x,test_y=None):
 def svm_predict(train_x,train_y,test_x,test_y=None):
     train_x = train_x.drop('id',axis=1)
     test_id = test_x.pop('id').reset_index().drop('index',axis=1)
-    model = SVC(C=1.0,kernel='rbf',gamma='auto')
+    model = SVC(C=1.0,kernel='rbf',gamma='auto',max_iter=10000)
+    train_x = train_x.fillna(-1)
+    test_x = test_x.fillna(-1)
+    print('拟合中')
     model.fit(train_x,train_y)
+    print('预测中')
     label = model.predict(test_x)
     label = pd.DataFrame(label,columns=['class'])
     res = test_id.join(label)

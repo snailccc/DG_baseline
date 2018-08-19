@@ -2,7 +2,6 @@ import pandas as pd
 import operator
 import os
 
-
 def max_num_feature(name):
     df = pd.read_csv('data/data_raw/{0}.csv'.format(name))
     features = set()
@@ -30,7 +29,6 @@ def max_num_feature(name):
             f.write('\n')
     print(len(features))
 
-
 def max_frequecny_feature(name):
     df = pd.read_csv('../data/data_raw/{0}.csv'.format(name))
     features = {}
@@ -55,7 +53,6 @@ def max_frequecny_feature(name):
             f.write('\n')
 
     print(len(features))
-
 
 def get_classes_feature(name, feature):
     df = pd.read_csv('../data/splited_data/split_to_classes/{0}.csv'.format(name))
@@ -97,30 +94,30 @@ def get_classes_feature(name, feature):
         temp.append(features_num[it])
         res.append(temp)
     # saving。。。
-    print(int(df.shape[0] / 3))
     res = pd.DataFrame(res, columns=['id', 'frequency', 'num'])
     res = res[res['frequency'] > int(df.shape[0] / 3)]
     res.to_csv('../data/features/{0}/{0}_{1}.csv'.format(feature, name), index=False)
     print('{0} is finished'.format(name))
 
-
-
 def count_feature_classes(name, feature):
     feature_dic = {}
+    feature_class = {}
     for index in range(1, 20):
         df = pd.read_csv('../data/features/{2}/{2}_{0}_{1}.csv'.format(name, index, feature))
         for i in range(df.shape[0]):
             id = df.iloc[i, 0]
             if id in feature_dic:
                 feature_dic[id] += 1
+                feature_class[id].add(str(index))
             else:
                 feature_dic[id] = 1
+                feature_class[id] = set(str(index))
         print('%d csv is count' % index)
     feature_list = []
     for k, v in feature_dic.items():
         print(k,v)
-        feature_list.append([k, v])
-    feature_df = pd.DataFrame(feature_list, columns=['id', 'frequency'])
-    feature_df = feature_df[feature_df['frequency'] < 7]
+        feature_list.append([k, v,' '.join(list(feature_class[k]))])
+    feature_df = pd.DataFrame(feature_list, columns=['id', 'frequency','classes'])
+    feature_df = feature_df[feature_df['frequency'] < 10]
     print(feature_df.info())
     feature_df.to_csv('../data/features/{0}.csv'.format(feature), index=False)
