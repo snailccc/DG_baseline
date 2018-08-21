@@ -124,3 +124,49 @@ def count_feature_classes(name, feature):
     feature_df = feature_df[feature_df['frequency'] < 10]
     print(feature_df.info())
     feature_df.to_csv('../data/features/{0}.csv'.format(feature), index=False)
+
+def find_all_feature(train=pd.DataFrame(),test=pd.DataFrame()):
+    feature_train_article=set()
+    feature_train_word_seg = set()
+    for i in range(train.shape[0]):
+        artcile = train.iloc[i,1].split(' ')
+        word_seg = train.iloc[i,2].split(' ')
+        feature_train_article = feature_train_article | set(artcile)
+        feature_train_word_seg = feature_train_word_seg | set(word_seg)
+        if i%100 == 0 and i != 0:
+            print(i)
+    feature_test_word_seg = set()
+    feature_test_article = set()
+    print('train_article is %d'%len(feature_train_article))
+    print('train_word_seg is %d' % len(feature_train_word_seg))
+    with open('../data/feature/train_feature_article.txt','w') as f:
+        for it in feature_test_article:
+            f.write(it)
+            f.write('\t')
+    with open('../data/feature/train_feature_word_seg.txt','w') as f:
+        for it in feature_test_word_seg:
+            f.write(it)
+            f.write('\t')
+    print("train's feature are got")
+    for i in range(test.shape[0]):
+        artcile = test.iloc[i,1]
+        word_seg = test.iloc[i,2]
+        feature_test_article = feature_test_article | set(artcile)
+        feature_test_word_seg = feature_test_word_seg | set(word_seg)
+        if i%100 == 0 and i != 0:
+            print(i)
+    with open('../data/feature/test_feature_article.txt','w') as f:
+        for it in feature_test_article:
+            f.write(it)
+            f.write('\t')
+    with open('../data/feature/test_feature_word_seg.txt','w') as f:
+        for it in feature_test_word_seg:
+            f.write(it)
+            f.write('\t')
+    print("test's feature are got")
+    print('test_article is %d'%len(feature_test_article))
+    print('test_word_seg is %d' % len(feature_test_word_seg))
+
+    print('*******************************')
+    print('the comment feature of article is %d ' % len(feature_train_article-feature_test_article))
+    print('the comment feature of word_seg is %d ' % len(feature_train_word_seg - feature_test_word_seg))

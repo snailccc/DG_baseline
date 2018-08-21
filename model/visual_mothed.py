@@ -17,4 +17,6 @@ def class_article_visual(df):
     plt.bar(range(len(data)),data,tick_label=xlabel)
     plt.savefig('../pic/word_seg(0.25_10).png')
 
+# def test_feature_visual(df):
+#     data =
 
