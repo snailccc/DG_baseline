@@ -30,7 +30,7 @@ def max_num_feature(name):
     print(len(features))
 
 def max_frequecny_feature(name):
-    df = pd.read_csv('../data/data_raw/{0}.csv'.format(name))
+    df = pd.read_csv('data/data_raw/{0}.csv'.format(name))
     features = {}
     for i in range(df.shape[0]):
         article = df.iloc[i, 1]
@@ -55,7 +55,7 @@ def max_frequecny_feature(name):
     print(len(features))
 
 def get_classes_feature(name, feature):
-    df = pd.read_csv('../data/splited_data/split_to_classes/{0}.csv'.format(name))
+    df = pd.read_csv('data/splited_data/split_to_classes/{0}.csv'.format(name))
     features_num = {}
     features_fre = {}
 
@@ -98,14 +98,14 @@ def get_classes_feature(name, feature):
     res = pd.DataFrame(res, columns=['id', 'frequency', 'num'])
     res = res[res['frequency'] > 0.25]
     print(res[res['frequency']>0.25].shape)
-    res.to_csv('../data/features/{0}/{0}_{1}.csv'.format(feature, name), index=False)
+    res.to_csv('data/features/{0}/{0}_{1}.csv'.format(feature, name), index=False)
     print('{0} is finished'.format(name))
 
 def count_feature_classes(name, feature):
     feature_dic = {}
     feature_class = {}
     for index in range(1, 20):
-        df = pd.read_csv('../data/features/{2}/{2}_{0}_{1}.csv'.format(name, index, feature))
+        df = pd.read_csv('data/features/{2}/{2}_{0}_{1}.csv'.format(name, index, feature))
         for i in range(df.shape[0]):
             id = df.iloc[i, 0]
             if id in feature_dic:
@@ -123,7 +123,7 @@ def count_feature_classes(name, feature):
     feature_df = pd.DataFrame(feature_list, columns=['id', 'frequency','classes'])
     feature_df = feature_df[feature_df['frequency'] < 10]
     print(feature_df.info())
-    feature_df.to_csv('../data/features/{0}.csv'.format(feature), index=False)
+    feature_df.to_csv('data/features/{0}.csv'.format(feature), index=False)
 
 def find_all_feature(train=pd.DataFrame(),test=pd.DataFrame()):
     feature_train_article=set()
@@ -139,11 +139,11 @@ def find_all_feature(train=pd.DataFrame(),test=pd.DataFrame()):
     feature_test_article = set()
     print('train_article is %d'%len(feature_train_article))
     print('train_word_seg is %d' % len(feature_train_word_seg))
-    with open('../data/feature/train_feature_article.txt','w') as f:
+    with open('data/feature/train_feature_article.txt','w') as f:
         for it in feature_test_article:
             f.write(it)
             f.write('\t')
-    with open('../data/feature/train_feature_word_seg.txt','w') as f:
+    with open('data/feature/train_feature_word_seg.txt','w') as f:
         for it in feature_test_word_seg:
             f.write(it)
             f.write('\t')
@@ -155,11 +155,11 @@ def find_all_feature(train=pd.DataFrame(),test=pd.DataFrame()):
         feature_test_word_seg = feature_test_word_seg | set(word_seg)
         if i%100 == 0 and i != 0:
             print(i)
-    with open('../data/feature/test_feature_article.txt','w') as f:
+    with open('data/feature/test_feature_article.txt','w') as f:
         for it in feature_test_article:
             f.write(it)
             f.write('\t')
-    with open('../data/feature/test_feature_word_seg.txt','w') as f:
+    with open('data/feature/test_feature_word_seg.txt','w') as f:
         for it in feature_test_word_seg:
             f.write(it)
             f.write('\t')
@@ -170,3 +170,30 @@ def find_all_feature(train=pd.DataFrame(),test=pd.DataFrame()):
     print('*******************************')
     print('the comment feature of article is %d ' % len(feature_train_article-feature_test_article))
     print('the comment feature of word_seg is %d ' % len(feature_train_word_seg - feature_test_word_seg))
+
+def ngram_feature(df,n,feature_name,df_name='train'):
+    res = []
+    for i in range(df.shape[0]):
+        feature = df.iloc[i,1].split(' ')
+        gram = []
+        length = len(feature)
+        for j in range(length):
+            gram.append(''.join(feature[j:j+n]))
+            if j+n == length:
+                break
+        res.append(' '.join(gram))
+        if i%100==0 and i!=0:
+            print(i)
+    res = pd.DataFrame(res,columns=[].append(feature_name))
+    df = df.join(res)
+    print(df.info)
+    path = '../data/features/n-gram/%d' % n
+    if not os.path.exists(path):
+        os.mkdir(path)
+        path = '{0}/{1}_{2}.csv'.format(path,df_name,feature_name)
+        df.to_csv(path,index=False)
+    else:
+        path = '{0}/{1}_{2}.csv'.format(path,df_name,feature_name)
+        df.to_csv(path,index=False)
+
+
