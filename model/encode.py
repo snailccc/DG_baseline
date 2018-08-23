@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer,TfidfVectorizer
+import os
 
 class Encode(object):
     @classmethod
@@ -22,8 +22,8 @@ class Encode(object):
         return df
 
     @classmethod
-    def TfiEncoding(cls,df,features):
-        Tfi = TfidfTransformer()
+    def TfEncoding(cls,df,features):
+        Tfi = TfidfVectorizer()
         for feature in features:
             df[feature] = df[feature].astype('str')
             Tfi.fit(df[feature])
@@ -35,4 +35,4 @@ class Encode(object):
             df = df.drop(feature,axis=1)
             df = df.join(res)
             print(feature + '  is finish')
-        return res
+        return df

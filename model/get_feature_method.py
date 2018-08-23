@@ -102,12 +102,24 @@ def get_classes_feature(name, feature):
     print('{0} is finished'.format(name))
 
 def count_feature_classes(name, feature):
+    if feature == 'article':
+        test_feature = open('data/features/all_features/test_feature_article.txt')
+        test_feature = test_feature.readline().split('\t')
+    elif feature == 'word_seg':
+        test_feature = open('data/features/all_features/test_feature_article.txt')
+        test_feature = test_feature.readline().split('\t')
+    else:
+        print('wrong')
+        exit(0)
+
     feature_dic = {}
     feature_class = {}
     for index in range(1, 20):
         df = pd.read_csv('data/features/{2}/{2}_{0}_{1}.csv'.format(name, index, feature))
         for i in range(df.shape[0]):
             id = df.iloc[i, 0]
+            if id not in test_feature:
+                continue
             if id in feature_dic:
                 feature_dic[id] += 1
                 feature_class[id].add(str(index))
