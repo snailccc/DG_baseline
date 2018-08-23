@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from sklearn.decomposition import PCA
 FEATURES = ['article','word_seg']
 
 def reduce_dimension(name,set_type,articles,word_segs):
@@ -32,12 +33,22 @@ def reduce_dimension(name,set_type,articles,word_segs):
         if i %100 == 0 and i != 0:print(i)
         if i == 300 :
             break
-    res = pd.DataFrame(res,columns=['id','article','word'])
+    res = pd.DataFrame(res,columns=['id','article','word_seg'])
     if set_type == 'train':
         res = res.join(classes)
     print(res.info())
     res.to_csv('../data/data_low_dimension/{0}_low.csv'.format(name),index=False)
     print('{0} is encoded'.format(name))
 
-
+def pca_reduce(df,set_type='test',n_components=10):
+    df_id = df.pop('id')
+    if set_type == 'train':
+        classes = df.pop('class')
+    pca = PCA(n_components=100)
+    res = pd.DataFrame(pca.fit_transform(df))
+    if set_type == 'train':
+        res = pd.concat([df_id,res,classes],axis=1)
+    else:
+        res = pd.concat([df_id, res], axis=1)
+    return res
 

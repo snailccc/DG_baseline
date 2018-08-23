@@ -24,10 +24,10 @@ def lgb_predict(train_x,train_y,test_x,test_y=None):
     print('lgb predict finish')
     return res
 
-def svm_predict(train_x,train_y,test_x,test_y=None):
+def svm_predict(train_x,train_y,test_x,test_y=None,max_iter=666):
     train_x = train_x.drop('id',axis=1)
     test_id = test_x.pop('id').reset_index().drop('index',axis=1)
-    model = SVC(C=1.0,kernel='rbf',gamma='auto',max_iter=10000)
+    model = SVC(C=1.0,kernel='rbf',gamma='auto',max_iter=max_iter)
     train_x = train_x.fillna(-1)
     test_x = test_x.fillna(-1)
     print('拟合中')
