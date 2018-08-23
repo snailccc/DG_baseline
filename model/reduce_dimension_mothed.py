@@ -44,7 +44,7 @@ def pca_reduce(df,set_type='test',n_components=10):
     df_id = df.pop('id')
     if set_type == 'train':
         classes = df.pop('class')
-    pca = PCA(n_components=100)
+    pca = PCA(n_components=n_components)
     res = pd.DataFrame(pca.fit_transform(df))
     if set_type == 'train':
         res = pd.concat([df_id,res,classes],axis=1)
