@@ -51,4 +51,3 @@ def pca_reduce(df,set_type='test',n_components=10):
     else:
         res = pd.concat([df_id, res], axis=1)
     return res
-

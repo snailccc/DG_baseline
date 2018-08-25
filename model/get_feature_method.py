@@ -44,7 +44,6 @@ def max_frequecny_feature(name):
             print('%d data are dealed' % i)
 
     print('count finished')
-
     features = sorted(zip(features.values(), features.keys()), reverse=True)
 
     with open('data/features/article_frequency.txt') as f:
@@ -111,7 +110,6 @@ def count_feature_classes(name, feature):
     else:
         print('wrong')
         exit(0)
-
     feature_dic = {}
     feature_class = {}
     for index in range(1, 20):
@@ -196,9 +194,12 @@ def ngram_feature(df,n,feature_name,df_name='train'):
         res.append(' '.join(gram))
         if i%100==0 and i!=0:
             print(i)
-    res = pd.DataFrame(res,columns=[].append(feature_name))
-    df = df.join(res)
-    print(df.info)
+    columns = []
+    columns.append(feature_name)
+    res = pd.DataFrame(res,columns=columns)
+    df.pop('article')
+    df = pd.concat([df.pop('id'),res,df.pop('class')],axis=1)
+    print(df.info())
     path = '../data/features/n-gram/%d' % n
     if not os.path.exists(path):
         os.mkdir(path)
@@ -207,5 +208,4 @@ def ngram_feature(df,n,feature_name,df_name='train'):
     else:
         path = '{0}/{1}_{2}.csv'.format(path,df_name,feature_name)
         df.to_csv(path,index=False)
-
 

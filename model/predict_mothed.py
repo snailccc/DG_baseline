@@ -52,7 +52,7 @@ def RNN_predict(train_x,train_y,test_x,test_y=None):
 
 def bayes_predict(train_x,train_y,test_x,test_y=None):
     train_x = train_x.drop('id',axis=1)
-    test_id = test_x.pop().reset_index().drop('index',axis=1)
+    test_id = test_x.pop('id').reset_index().drop('index',axis=1)
     model = naive_bayes.GaussianNB()
     model.fit(train_x,train_y)
     label = model.predict(test_x)
