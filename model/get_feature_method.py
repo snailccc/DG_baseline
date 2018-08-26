@@ -1,6 +1,7 @@
 import pandas as pd
 import operator
 import os
+import math
 
 def max_num_feature(name):
     df = pd.read_csv('data/data_raw/{0}.csv'.format(name))
@@ -208,4 +209,46 @@ def ngram_feature(df,n,feature_name,df_name='train'):
     else:
         path = '{0}/{1}_{2}.csv'.format(path,df_name,feature_name)
         df.to_csv(path,index=False)
+
+def get_tf(df,f_name):
+    dic = {}
+    count = 0
+    for it in df[f_name]:
+        feature = it.split(' ')
+        count += len(feature)
+        for i in feature:
+            if i in dic:
+                dic[i] += 1
+            else:
+                dic[i] = 1
+    res = []
+    for it in dic:
+        res.append([it,dic[it]/count])
+    return pd.DataFrame(res,columns=['id','tf'])
+
+def get_idf(f_name):
+    N = 19
+    dic = {}
+    for i in range(1,20):
+        df = pd.read_csv('../data/features/tf_idf/{0}/{0}_{1}.csv'.format(f_name,i))
+        for id in df['id']:
+            if id in dic:
+                dic[id] += 1
+            else:
+                dic[id] = 1
+    res = []
+    for it in dic:
+        temp=[]
+        temp.append(it)
+        temp.append(math.log(N/dic[it]))
+        res.append(temp)
+    res = pd.DataFrame(res,columns=['id','idf'])
+    res = res.merge(df,on =['id'])
+    tf_idf = []
+    for i in range(res.shape[0]):
+        tf_idf.append({'id':res.iloc[i,0],'tf-idf':res.iloc[i,1]*res.iloc[i,2]})
+    res = pd.DataFrame(tf_idf)
+    res = res[res['tf-idf']!=0]
+    print('get TF-IDF finished')
+    return res
 
