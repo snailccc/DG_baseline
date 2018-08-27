@@ -10,6 +10,8 @@ def tf_idf():
             res = get_tf(df,name)
             res.to_csv('../data/features/tf_idf/{0}/{0}_{1}.csv'.format(name,i),index=False)
         res = get_idf(name)
+        res = res.sort_values(by=['tf-idf'],ascending=False)
+        res = res.iloc[:1500,:]
         res.to_csv('../data/features/tf_idf/{0}.csv'.format(name), index=False)
 
 
